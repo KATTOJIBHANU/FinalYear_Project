@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+        }
+        
+        .sort-options, .input-options {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .hotel {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .hotel h2 {
+            margin: 0;
+        }
+        
+        .hotel .price {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .hotel img {
+            width: 150px;
+            height: 100px;
+            margin-right: 20px;
+        }
+
+        .hotel .details {
+            flex: 1;
+        }
+
+        button {
+            padding: 10px 20px;
+            color: white;
+            background-color: blue;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hotel Booking</h1>
+        <div class="sort-options">
+            <label for="sort">Sort by: </label>
+            <select id="sort" onchange="sortHotels()">
+                <option value="low-to-high">Price: Low to High</option>
+                <option value="high-to-low">Price: High to Low</option>
+            </select>
+        </div>
+        <div class="input-options">
+            <label for="persons">Number of Persons: </label>
+            <input type="number" id="persons" value="1" min="1" onchange="updatePrices()">
+            <label for="days">Number of Days: </label>
+            <input type="number" id="days" value="1" min="1" onchange="updatePrices()">
+        </div>
+        <div id="hotels-list">
+            <!-- Hotel items will be inserted here -->
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hotels = [
+                { name: 'NOVOTEL', price: 2000, image: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/61432478.jpg?k=21fbb65772bbd9f9f7e5248458e9306af7c9a6f69d9a4bb167def68e368584d4&o=&hp=1', description: 'Spacious and luxurious. <br>2km from Marina Beach' },
+                { name: 'LUXIES', price: 1500, image: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/269800030.jpg?k=4bf5bea8bbe741447e3ccffb0d6049e290198ca29d066658fc99b5718e1a0fe4&o=&hp=1', description: 'Cozy and comfortable. <br>3km from MGR Chennai Central' },
+                { name: 'SAMSREN', price: 2500, image: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/225012476.webp?k=fa209a338e145df42e6e6c0ea030e28da8dbeaad2ad3597f95cd4465c061f5c5&o=', description: 'Elegant and stylish. <br>2.5km from Sathyabama' },
+                { name: 'LUKUA', price: 1800, image: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/465660282.webp?k=8ea2f01af052317c72ece87f11be2cc03a56fb23c54950558cdc2136a65a4d37&o=', description: 'Modern and affordable. <br>5km from Airport' },
+                { name: '5-STAR LUX', price: 3000, image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/47/43/0b/the-accord-metropolitan.jpg?w=1200&h=-1&s=1', description: 'Luxury at its best. <br>9km from MGR Chennai Central' },
+                { name: 'OCEAN VIEW', price: 2200, image: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/117993839.webp?k=fe085e9750b940dad05f1be61b54cdca6f7a5d8777fd400a60a07d55de2cc1d3&o=', description: 'Stunning ocean views. <br>1km from Marina Beach' },
+                { name: 'GREEN HAVEN', price: 1600, image: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/34213277.webp?k=bcc447ce78b5822966ed767cc840fb45e1ef6c1707a17669b8759db5aec624bd&o=', description: 'Eco-friendly and serene. <br>4km from Botanical Garden' },
+                { name: 'CITY LIGHTS', price: 1300, image: 'https://cf.bstatic.com/xdata/images/hotel/270x200/353999219.jpg?k=3bdf569ac7e4f0604affa98db220074e72192ed49ff89292fbc39bb76674eaa8&o=', description: 'Located in the city center. <br>0.5km from MGR Chennai Central' },
+                { name: 'MOUNTAIN ESCAPE', price: 2700, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgOCEG1Ho0aMy_fzD1ikCV8cIf99y4vlUwqw&s', description: 'Nestled in the mountains. <br>10km from Hill Station' },
+                { name: 'HISTORIC INN', price: 1900, image: 'https://cf.bstatic.com/xdata/images/hotel/max300/562756651.jpg?k=7b5324d7bd3bfb948483817dbf45d948a1e3ba6061a54146bebc7b290e777774&o=', description: 'Historic charm with modern amenities. <br>2km from Heritage Site' }
+            ];
+        
+            const hotelsList = document.getElementById('hotels-list');
+            const personsInput = document.getElementById('persons');
+            const daysInput = document.getElementById('days');
+        
+            function displayHotels(hotels) {
+                hotelsList.innerHTML = '';
+                hotels.forEach(hotel => {
+                    const totalPrice = hotel.price * personsInput.value * daysInput.value;
+                    const hotelElement = document.createElement('div');
+                    hotelElement.classList.add('hotel');
+                    hotelElement.innerHTML = `
+                        <img src="${hotel.image}" alt="${hotel.name}">
+                        <div class="details">
+                            <h2>${hotel.name}</h2>
+                            <p>${hotel.description}</p>
+                            <div class="price">Rs: ${totalPrice}</div>
+                            <form action="payment.html" method="GET">
+                                <input type="hidden" name="name" value="${hotel.name}">
+                                <input type="hidden" name="price" value="${totalPrice}">
+                                <button type="submit">Book</button>
+                            </form>
+                        </div>
+                    `;
+                    hotelsList.appendChild(hotelElement);
+                });
+            }
+        
+            displayHotels(hotels);
+        
+            window.sortHotels = function() {
+                const sortOption = document.getElementById('sort').value;
+                let sortedHotels = [...hotels];
+                if (sortOption === 'low-to-high') {
+                    sortedHotels.sort((a, b) => a.price - b.price);
+                } else if (sortOption === 'high-to-low') {
+                    sortedHotels.sort((a, b) => b.price - a.price);
+                }
+                displayHotels(sortedHotels);
+            }
+        
+            window.updatePrices = function() {
+                displayHotels(hotels);
+            }
+        });
+    </script>
+</body>
+</html>

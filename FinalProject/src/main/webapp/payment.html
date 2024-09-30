@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        
+        .payment-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        
+        .payment-container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .payment-details {
+            margin-bottom: 20px;
+        }
+        
+        .payment-details p {
+            margin: 10px 0;
+        }
+        
+        button {
+            padding: 10px 20px;
+            color: white;
+            background-color: blue;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: darkblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h1>Payment Page</h1>
+        <div class="payment-details">
+            <p id="hotel-name">Hotel: </p>
+            <p id="hotel-price">Total Price: Rs 0</p>
+        </div>
+        <button onclick="redirectToCardPage('advance')">Pay 20% Advance</button>
+        <button onclick="redirectToCardPage('full')">Pay Full Amount</button>
+    </div>
+
+    <script>
+        function getParameterByName(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+
+        const hotelName = getParameterByName('name');
+        const hotelPrice = parseFloat(getParameterByName('price'));
+
+        document.getElementById('hotel-name').textContent = 'Hotel: ' + hotelName;
+        document.getElementById('hotel-price').textContent = 'Total Price: Rs ' + hotelPrice.toFixed(2);
+
+        function redirectToCardPage(type) {
+            let amountToPay;
+            if (type === 'advance') {
+                amountToPay = hotelPrice * 0.2;
+            } else if (type === 'full') {
+                amountToPay = hotelPrice;
+            }
+
+            // Redirect to card payment page with amount as a URL parameter
+            window.location.href = `card.html?name=${encodeURIComponent(hotelName)}&amount=${amountToPay.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
+

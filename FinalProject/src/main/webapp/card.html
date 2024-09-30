@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        
+        .payment-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+        
+        .payment-container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .payment-details {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .payment-details p {
+            margin: 10px 0;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            color: white;
+            background-color: blue;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: darkblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h1>Card Payment</h1>
+        <div class="payment-details">
+            <p id="hotel-name">Hotel: </p>
+            <p id="payment-amount">Amount: Rs 0</p>
+        </div>
+        <form id="payment-form">
+            <input type="text" id="card-number" placeholder="Card Number" required>
+            <input type="text" id="card-name" placeholder="Cardholder Name" required>
+            <input type="text" id="expiry-date" placeholder="Expiry Date (MM/YY)" required>
+            <input type="text" id="cvv" placeholder="CVV" required>
+            <button type="submit">Pay Now</button>
+        </form>
+    </div>
+
+    <script>
+        function getParameterByName(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+
+        const hotelName = getParameterByName('name');
+        const paymentAmount = parseFloat(getParameterByName('amount'));
+
+        document.getElementById('hotel-name').textContent = 'Hotel: ' + hotelName;
+        document.getElementById('payment-amount').textContent = 'Amount: Rs ' + paymentAmount.toFixed(2);
+
+        // Handle form submission
+        document.getElementById('payment-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Payment of Rs ' + paymentAmount.toFixed(2) + ' processed for ' + hotelName);
+            window.open('home.jsp');
+            // Add payment processing logic here
+        });
+    </script>
+</body>
+</html>
